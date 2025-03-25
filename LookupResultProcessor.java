@@ -63,85 +63,117 @@ public class LookupResultProcessor {
     public static void processRecord(org.xbill.DNS.Record record) {
         String output;
         switch (record.getType()) {
-            case Type.A -> {
-                ARecord aRecord = (ARecord) record;
-                output = "\033[0;32mA Record:\033[0m " + aRecord.getAddress().toString().replaceAll("\\.$", "");
-            }
-            case Type.AAAA -> {
-                AAAARecord aaaaRecord = (AAAARecord) record;
-                output = "\033[0;32mAAAA Record:\033[0m " + aaaaRecord.getAddress().toString().replaceAll("\\.$", "");
-            }
-            case Type.PTR -> {
-                PTRRecord ptrRecord = (PTRRecord) record;
-                output = "\033[0;32mPTR Record:\033[0m " + ptrRecord.getTarget().toString().replaceAll("\\.$", "");
-            }
-            case Type.MX -> {
-                MXRecord mxRecord = (MXRecord) record;
-                output = "\033[0;32mMX Record:\033[0m " + mxRecord.getTarget().toString().replaceAll("\\.$", "");
-            }
-            case Type.NS -> {
-                NSRecord nsRecord = (NSRecord) record;
-                output = "\033[0;32mNS Record:\033[0m " + nsRecord.getTarget().toString().replaceAll("\\.$", "");
-            }
-            case Type.CNAME -> {
-                CNAMERecord cnameRecord = (CNAMERecord) record;
-                output = "\033[0;32mCNAME Record:\033[0m " + cnameRecord.getTarget().toString().replaceAll("\\.$", "");
-            }
-            case Type.SOA -> {
-                SOARecord soaRecord = (SOARecord) record;
-                output = "\033[0;32mSOA Record:\033[0m " + soaRecord.getName().toString().replaceAll("\\.$", "") + " "
-                        + soaRecord.rdataToString();
-            }
-            case Type.TXT -> {
-                TXTRecord txtRecord = (TXTRecord) record;
-                output = "\033[0;32mTXT Record:\033[0m " + txtRecord.getStrings();
-            }
-            case Type.SRV -> {
-                SRVRecord srvRecord = (SRVRecord) record;
-                output = "\033[0;32mSRV Record:\033[0m " + srvRecord.getPriority() + " "
-                        + srvRecord.getWeight() + " "
-                        + srvRecord.getPort() + " "
-                        + srvRecord.getTarget().toString().replaceAll("\\.$", "");
-            }
-            case Type.CAA -> {
-                CAARecord caaRecord = (CAARecord) record;
-                output = "\033[0;32mCAA Record:\033[0m " + caaRecord.getTag() + " "
-                        + caaRecord.getFlags() + " "
-                        + caaRecord.getValue();
-            }
-            case Type.HINFO -> {
-                HINFORecord hinfoRecord = (HINFORecord) record;
-                output = "\033[0;32mHINFO Record:\033[0m " + hinfoRecord.getCPU() + " "
-                        + hinfoRecord.getOS();
-            }
-            case Type.LOC -> {
-                LOCRecord locRecord = (LOCRecord) record;
-                output = "\033[0;32mLOC Record:\033[0m " + locRecord.toString();
-            }
-            case Type.NAPTR -> {
-                NAPTRRecord naptrRecord = (NAPTRRecord) record;
-                output = "\033[0;32mNAPTR Record:\033[0m " + naptrRecord.getFlags() + " "
-                        + naptrRecord.getService() + " "
-                        + naptrRecord.getRegexp() + " "
-                        + naptrRecord.getReplacement().toString().replaceAll("\\.$", "");
-            }
-            case Type.RRSIG -> {
-                RRSIGRecord rrsigRecord = (RRSIGRecord) record;
-                output = "\033[0;32mRRSIG Record:\033[0m "
-                        + "Type: " + rrsigRecord.getTypeCovered() + ", "
-                        + "Signer: " + rrsigRecord.getSigner().toString() + ", "
-                        + "Signature: " + Arrays.toString(rrsigRecord.getSignature());
-            }
-            case Type.DNSKEY -> {
-                DNSKEYRecord dnskeyRecord = (DNSKEYRecord) record;
-                output = "\033[0;32mDNSKEY Record:\033[0m "
-                        + "Algorithm: " + dnskeyRecord.getAlgorithm() + ", "
-                        + "Public Key: " + Arrays.toString(dnskeyRecord.getKey());
-            }
-            default -> {
+            case Type.A ->
+                output = formatARecord((ARecord) record);
+            case Type.AAAA ->
+                output = formatAAAARecord((AAAARecord) record);
+            case Type.PTR ->
+                output = formatPTRRecord((PTRRecord) record);
+            case Type.MX ->
+                output = formatMXRecord((MXRecord) record);
+            case Type.NS ->
+                output = formatNSRecord((NSRecord) record);
+            case Type.CNAME ->
+                output = formatCNAMERecord((CNAMERecord) record);
+            case Type.SOA ->
+                output = formatSOARecord((SOARecord) record);
+            case Type.TXT ->
+                output = formatTXTRecord((TXTRecord) record);
+            case Type.SRV ->
+                output = formatSRVRecord((SRVRecord) record);
+            case Type.CAA ->
+                output = formatCAARecord((CAARecord) record);
+            case Type.HINFO ->
+                output = formatHINFORecord((HINFORecord) record);
+            case Type.LOC ->
+                output = formatLOCRecord((LOCRecord) record);
+            case Type.NAPTR ->
+                output = formatNAPTRRecord((NAPTRRecord) record);
+            case Type.RRSIG ->
+                output = formatRRSIGRecord((RRSIGRecord) record);
+            case Type.DNSKEY ->
+                output = formatDNSKEYRecord((DNSKEYRecord) record);
+            case Type.NSEC ->
+                output = formatNSECRecord((NSECRecord) record);
+            case Type.NSEC3 ->
+                output = formatNSEC3Record((NSEC3Record) record);
+            case Type.TLSA ->
+                output = formatTLSARecord((TLSARecord) record);
+            default ->
                 output = "\033[0;33mUnknown record type: " + record.getType() + "\033[0m";
-            }
         }
         System.out.println(output);
+    }
+
+    private static String formatARecord(ARecord record) {
+        return "\033[0;32mA Record:\033[0m " + record.getAddress().toString().replaceAll("\\.$", "");
+    }
+
+    private static String formatAAAARecord(AAAARecord record) {
+        return "\033[0;32mAAAA Record:\033[0m " + record.getAddress().toString().replaceAll("\\.$", "");
+    }
+
+    private static String formatPTRRecord(PTRRecord record) {
+        return "\033[0;32mPTR Record:\033[0m " + record.getTarget().toString().replaceAll("\\.$", "");
+    }
+
+    private static String formatMXRecord(MXRecord record) {
+        return "\033[0;32mMX Record:\033[0m " + record.getTarget().toString().replaceAll("\\.$", "");
+    }
+
+    private static String formatNSRecord(NSRecord record) {
+        return "\033[0;32mNS Record:\033[0m " + record.getTarget().toString().replaceAll("\\.$", "");
+    }
+
+    private static String formatCNAMERecord(CNAMERecord record) {
+        return "\033[0;32mCNAME Record:\033[0m " + record.getTarget().toString().replaceAll("\\.$", "");
+    }
+
+    private static String formatSOARecord(SOARecord record) {
+        return "\033[0;32mSOA Record:\033[0m " + record.getName().toString().replaceAll("\\.$", "") + " " + record.rdataToString();
+    }
+
+    private static String formatTXTRecord(TXTRecord record) {
+        return "\033[0;32mTXT Record:\033[0m " + record.getStrings();
+    }
+
+    private static String formatSRVRecord(SRVRecord record) {
+        return "\033[0;32mSRV Record:\033[0m " + record.getPriority() + " " + record.getWeight() + " " + record.getPort() + " " + record.getTarget().toString().replaceAll("\\.$", "");
+    }
+
+    private static String formatCAARecord(CAARecord record) {
+        return "\033[0;32mCAA Record:\033[0m " + record.getTag() + " " + record.getFlags() + " " + record.getValue();
+    }
+
+    private static String formatHINFORecord(HINFORecord record) {
+        return "\033[0;32mHINFO Record:\033[0m " + record.getCPU() + " " + record.getOS();
+    }
+
+    private static String formatLOCRecord(LOCRecord record) {
+        return "\033[0;32mLOC Record:\033[0m " + record.toString();
+    }
+
+    private static String formatNAPTRRecord(NAPTRRecord record) {
+        return "\033[0;32mNAPTR Record:\033[0m " + record.getFlags() + " " + record.getService() + " " + record.getRegexp() + " " + record.getReplacement().toString().replaceAll("\\.$", "");
+    }
+
+    private static String formatRRSIGRecord(RRSIGRecord record) {
+        return "\033[0;32mRRSIG Record:\033[0m " + "Type: " + record.getTypeCovered() + ", " + "Signer: " + record.getSigner().toString() + ", " + "Signature: " + Arrays.toString(record.getSignature());
+    }
+
+    private static String formatDNSKEYRecord(DNSKEYRecord record) {
+        return "\033[0;32mDNSKEY Record:\033[0m " + "Algorithm: " + record.getAlgorithm() + ", " + "Public Key: " + Arrays.toString(record.getKey());
+    }
+
+    private static String formatNSECRecord(NSECRecord record) {
+        return "\033[0;32mNSEC Record:\033[0m " + record.toString();
+    }
+
+    private static String formatNSEC3Record(NSEC3Record record) {
+        return "\033[0;32mNSEC3 Record:\033[0m " + record.toString();
+    }
+
+    private static String formatTLSARecord(TLSARecord record) {
+        return "\033[0;32mTLSA Record:\033[0m " + record.toString();
     }
 }

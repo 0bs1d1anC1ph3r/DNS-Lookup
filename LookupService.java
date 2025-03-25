@@ -39,9 +39,9 @@ public class LookupService {
 
     public void forwardLookup(String domain) {
         runLookup(domain, new int[]{
-                Type.A, Type.AAAA, Type.MX, Type.NS, Type.CNAME, Type.SOA,
-                Type.TXT, Type.SRV, Type.CAA, Type.HINFO, Type.LOC, Type.NAPTR,
-                Type.DNSKEY, Type.RRSIG
+            Type.A, Type.AAAA, Type.MX, Type.NS, Type.CNAME, Type.SOA,
+            Type.TXT, Type.SRV, Type.CAA, Type.PTR, Type.DNSKEY, Type.RRSIG,
+            Type.NSEC, Type.NSEC3, Type.TLSA
         });
     }
 
